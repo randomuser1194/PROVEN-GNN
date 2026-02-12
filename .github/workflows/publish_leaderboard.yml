@@ -1,14 +1,16 @@
 name: Publish Leaderboard
 
 on:
-  push:
-    branches: [ main ]
-    paths:
-      - "leaderboard/leaderboard.csv"
+  workflow_run:
+    workflows: ["Evaluate Submission"]
+    types:
+      - completed
 
 jobs:
   render:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+    
     steps:
       - uses: actions/checkout@v4
 
