@@ -176,7 +176,8 @@ function setupSorting() {
 async function main() {
   const status = document.getElementById("status");
   try {
-    const res = await fetch("../leaderboard/leaderboard.csv", { cache: "no-store" });
+    //const res = await fetch("../leaderboard/leaderboard.csv", { cache: "no-store" });
+    const res = await fetch("leaderboard/leaderboard.csv", { cache: "no-store" });
     const txt = await res.text();
     const rows = parseCSV(txt);
 
