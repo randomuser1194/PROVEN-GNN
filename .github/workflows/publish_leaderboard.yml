@@ -2,9 +2,9 @@ name: Publish Leaderboard
 
 on:
   push:
-    branches: [ main ]
-    paths:
-      - "leaderboard/leaderboard.csv"
+    branches: main
+    # paths:
+    #   - "leaderboard/leaderboard.csv"
 
 jobs:
   render:
