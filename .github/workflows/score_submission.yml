@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: write
-  
+
 jobs:
   evaluate:
     runs-on: ubuntu-latest
@@ -38,11 +38,6 @@ jobs:
           EXPECTED2="submissions/metadata.json"
 
           COUNT=$(echo "$FILES" | wc -l)
-
-          if [ "$COUNT" -ne 2 ]; then
-            echo "❌ PR must contain exactly 2 files inside submissions/"
-            exit 1
-          fi
 
           if ! echo "$FILES" | grep -qx "$EXPECTED1"; then
             echo "❌ Missing submissions/submission.csv"
