@@ -47,8 +47,7 @@ if os.path.exists(leaderboard_csv):
 
     # 🔎 Check if username already exists
     if username in df["username"].values:
-        print(f"⚠️ Username '{username}' already exists in leaderboard. No update performed.")
-        sys.exit(0)
+        raise ValueError(f"⚠️ Username '{username}' already exists in leaderboard. No update performed.")
 
     # If not exists → append
     df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
