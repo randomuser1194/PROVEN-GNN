@@ -112,6 +112,6 @@ jobs:
       # 1️⃣2️⃣ Commit and push leaderboard
       - name: Commit leaderboard update
         run: |
-          git add leaderboard.csv
+          git add leaderboard/leaderboard.csv
           git commit -m "Update leaderboard"
           git push
