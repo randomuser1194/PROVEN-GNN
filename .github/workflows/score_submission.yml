@@ -80,7 +80,11 @@ jobs:
       # 8️⃣ Validate submission
       - name: Validate submission
         run: |
-          python competition/validate_submission.py
+          python competition/validate_submission.py \
+            submissions/submission.csv \
+            data/public/test_ids.csv \
+            submissions/metadata.json
+
 
       # 9️⃣ Run scoring
       - name: Run scoring
