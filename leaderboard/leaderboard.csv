@@ -1,4 +1,5 @@
 username,timestamp_utc,team,run_id,type,model,macro_f1,accuracy,precision,recall
 randomuser1194,2026-02-12 08:56:24 UTC,team1,run_001,human,GCN,0.71535,0.797428,0.558621,0.566434
+randomuser1194,2026-02-12 08:56:24 UTC,team1,run_001,human,GCN,0.71535,0.797428,0.558621,0.566434
 
 
