@@ -9,7 +9,7 @@ score_file = sys.argv[1]
 metadata_file = sys.argv[2]   
 username = sys.argv[3]
 
-leaderboard_csv = "../leaderboard/leaderboard.csv"
+leaderboard_csv = "leaderboard/leaderboard.csv"
 
 # Read scores
 with open(score_file, "r") as f:
