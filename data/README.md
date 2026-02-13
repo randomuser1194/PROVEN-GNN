@@ -1,6 +1,8 @@
 # 📂 Data Folder Overview
 
-This folder contains the datasets used for the **PROVEN-GNN Challenge**. It includes both training and test data, along with metadata for the test graphs.
+This folder contains the datasets and example submission file used for the **PROVEN-GNN Challenge**.
+
+It includes **training data**, **test data**, **test graph IDs**, and a **sample submission file**.
 
 ---
 
@@ -35,7 +37,7 @@ Contains the test features for each graph.
 | `edge_attr`  | Edge features of the graph (shape `(E, 12)`), where `E` is the number of edges            |
 | `edge_index` | List of two lists representing the source node IDs and destination node IDs for each edge |
 
-> ⚠️ No labels are provided in `test_data.parquet`.
+> ⚠️ Note: No labels are provided in `test_data.parquet`.
 
 ---
 
@@ -48,3 +50,16 @@ Contains the list of graph IDs in the test set.
 | Column | Description                        |
 | ------ | ---------------------------------- |
 | `id`   | Index of the graph in the test set |
+
+---
+
+### 4️⃣ `sample_submission.csv`
+
+Provides an example of how your prediction file should be formatted for submission.
+
+**Structure:**
+
+| Column   | Description                                                 |
+| -------- | ----------------------------------------------------------- |
+| `id`     | Graph ID corresponding to a test graph                      |
+| `y_pred` | Predicted label: `1` for vulnerable, `0` for non-vulnerable |
