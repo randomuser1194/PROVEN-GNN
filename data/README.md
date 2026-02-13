@@ -8,7 +8,7 @@ It includes **training data**, **test data**, **test graph IDs**, and a **sample
 
 ## 📄 Files
 
-### 1️⃣ `train_data.parquet`
+### 1️⃣ `train_data.parquet` (to be downloaded)
 
 Contains the training features and labels for each graph.
 
@@ -24,7 +24,7 @@ Contains the training features and labels for each graph.
 
 ---
 
-### 2️⃣ `test_data.parquet`
+### 2️⃣ `test_data.parquet` (to be downloaded)
 
 Contains the test features for each graph.
 
