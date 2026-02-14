@@ -41,7 +41,8 @@ The objective is to classify code functions as **vulnerable** or **non-vulnerabl
 
 ### Graph Construction
 
-The dataset was adapted by generating graph representations for a subset of code functions.
+The dataset was adapted by generating graph representations for a subset of code functions. It includes **2,487 training graphs** and **622 test graphs**. The class distribution is imbalanced, with vulnerable code representing only **29%** of the data.
+
 
 We used **Joern** to construct **Code Property Graphs (CPG)**, which combine:
 
