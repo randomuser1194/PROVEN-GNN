@@ -52,10 +52,10 @@ def build_dataloader(df, batch_size=32, shuffle=False, has_labels=True):
     )
 
 # Loading data 
-dataset = pd.read_parquet('train_data.parquet')
+dataset = pd.read_parquet('../data/public/train_data.parquet')
 dataset = dataset.rename(columns={"label": "y"})
 train, val = train_test_split(dataset, test_size=0.2, random_state=42, shuffle=True) 
-test = pd.read_parquet('test_data.parquet')
+test = pd.read_parquet('../data/public/train_data.parquet')
 
 # Building dataloaders   
 train_loader = build_dataloader(train, batch_size=32, shuffle=True, has_labels=True)

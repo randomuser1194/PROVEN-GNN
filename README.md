@@ -128,8 +128,8 @@ pip install -r starter_code/requirements.txt
 cd data/public
 pip install gdown
 
-gdown --id 1kUNwo7WjVpJ2D1GPsotiNO5FJnCqt--9 -O train.parquet
-gdown --id 1xhg62LTAJm5ityBKiXKv8Rsg0eSl9TJC -O test.parquet
+gdown --id 1kUNwo7WjVpJ2D1GPsotiNO5FJnCqt--9 -O train_data.parquet
+gdown --id 1xhg62LTAJm5ityBKiXKv8Rsg0eSl9TJC -O test_data.parquet
 ```
 
 ### 4️⃣ Run the Baseline Model
