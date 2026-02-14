@@ -47,9 +47,30 @@ function renderTable() {
   tbody.innerHTML = "";
   const rows = state.filtered;
 
+  let lastScore = null;
+  let lastRank = 0;
+
   rows.forEach((r, idx) => {
     const tr = document.createElement("tr");
-    const rank = idx + 1;
+
+    let rank;
+
+    // Only apply tie-ranking when sorting by score
+    if (state.sortKey === "score") {
+      const currentScore = parseFloat(r.score);
+
+      if (currentScore === lastScore) {
+        rank = lastRank; // same rank as previous
+      } else {
+        rank = idx + 1;  // position-based rank
+        lastRank = rank;
+        lastScore = currentScore;
+      }
+    } else {
+      // normal ranking for other columns
+      rank = idx + 1;
+    }
+
     const cells = [
       ["rank", rank],
       ["team", r.team],
@@ -58,6 +79,7 @@ function renderTable() {
       ["timestamp_utc", r.timestamp_utc],
       ["notes", r.notes || ""],
     ];
+
     cells.forEach(([k, v]) => {
       const td = document.createElement("td");
       td.dataset.key = k;
@@ -67,6 +89,7 @@ function renderTable() {
       if (state.hiddenCols.has(k)) td.style.display = "none";
       tr.appendChild(td);
     });
+
     tbody.appendChild(tr);
   });
 

@@ -34,7 +34,7 @@ jobs:
           echo "Files found:"
           echo "$FILES"
 
-          EXPECTED1="submissions/submission.csv"
+          EXPECTED1="submissions/predictions.csv"
           EXPECTED2="submissions/metadata.json"
 
           COUNT=$(echo "$FILES" | wc -l)
@@ -45,7 +45,7 @@ jobs:
           fi
 
           if ! echo "$FILES" | grep -qx "$EXPECTED1"; then
-            echo "❌ Missing submissions/submission.csv"
+            echo "❌ Missing submissions/predictions.csv"
             exit 1
           fi
 
@@ -59,7 +59,7 @@ jobs:
       # 4️⃣ Checkout only the required submission files
       - name: Checkout submission files
         run: |
-          git checkout pr -- submissions/submission.csv
+          git checkout pr -- submissions/predictions.csv
           git checkout pr -- submissions/metadata.json
 
       # 5️⃣ Set up Python
@@ -84,7 +84,7 @@ jobs:
       - name: Validate submission
         run: |
           python competition/validate_submission.py \
-            submissions/submission.csv \
+            submissions/predictions.csv \
             data/public/test_ids.csv \
             submissions/metadata.json
 
@@ -93,10 +93,26 @@ jobs:
       - name: Run scoring
         run: |
           python competition/evaluate.py \
-            submissions/submission.csv \
+            submissions/predictions.csv \
             private_labels/test_labels.csv \
             score.txt
           cp score.txt /tmp/score.txt
+
+       # 🔟 Comment Macro F1 on Pull Request
+      - name: Comment Macro F1 on PR
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const raw = fs.readFileSync('/tmp/score.txt', 'utf8').trim();
+            const macroF1 = raw.split(',')[0].trim();
+            const prNumber = context.payload.pull_request.number;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: "✅ Submission Evaluated \n 🏆 **Macro F1 Score:** \`${macroF1}\`"
 
       # 1️⃣1️⃣ Update leaderboard.csv
       - name: Update leaderboard.csv
