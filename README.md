@@ -54,7 +54,7 @@ We used **Joern** to construct **Code Property Graphs (CPG)**, which combine:
 
 The following figure shows an example of a generated CPG:
 
-![CPG](CPG.png)
+![CPG](extra/CPG.png)
 
 ---
 
@@ -173,6 +173,17 @@ id,y_pred
 * `"llm-only"`
 * `"human+llm"`
 
+### Encryption Process
+
+You should be in the root directory, and the file `predictions.csv` should be inside the `submissions/` directory
+```bash
+# For Windows users
+.\extra\encrypt_win.ps1 submissions\predictions.csv
+
+# For Linux users
+bash extra/encrypt_linux.sh submissions/predictions.csv
+```
+
 ---
 
 ### Submission Steps
@@ -180,9 +191,10 @@ id,y_pred
 1. Fork this repository
 2. Train your model and generate predictions
 3. Add `predictions.csv` and `metadata.json` to the `submissions/` directory
-4. Create a Pull Request
-5. GitHub Actions automatically evaluate your submission
-6. Results are posted as a comment and added to the leaderboard
+4. Run the encryption script (**A critical step !**)
+5. Create a Pull Request
+6. GitHub Actions automatically evaluate your submission
+7. Results are posted as a comment and added to the leaderboard
 
 ---
 
