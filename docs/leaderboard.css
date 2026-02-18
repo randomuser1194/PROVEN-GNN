@@ -7,7 +7,6 @@
   --accent: #2563eb;
   --header-blue: #2563eb;
   --label-dark: #334155;
-  /* Darker slate for title visibility */
 }
 
 * {
@@ -28,16 +27,17 @@ body {
 }
 
 h1 {
-  margin: 0 0 8px 0;
+  margin: 20px 0 8px 0;
+  font-size: 2.5rem;
   color: var(--text);
 }
 
 .sub {
-  margin: 0 0 20px 0;
+  margin: 0 0 30px 0;
   color: var(--muted);
 }
 
-/* Main Card */
+/* Main Card Container */
 .card {
   background: var(--panel);
   border: 1px solid var(--border);
@@ -46,26 +46,25 @@ h1 {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* --- Visibility Update for Titles --- */
+/* Visibility update for Search, Model, Date, Columns labels */
 .control label {
   display: block;
   font-size: 13px;
   font-weight: 800;
-  /* Extra bold for visibility */
   color: var(--label-dark);
-  margin: 0 0 10px 4px;
+  margin: 0 0 12px 4px;
   text-transform: uppercase;
-  letter-spacing: 0.7px;
-  /* Spaced out for clarity */
+  letter-spacing: 0.8px;
 }
 
-/* Controls Layout */
+/* Controls Layout: Aligns everything in a responsive row */
 .controls {
   display: grid;
-  grid-template-columns: 1.5fr 0.8fr 0.8fr 1.5fr;
-  gap: 20px;
+  grid-template-columns: 1.2fr 0.6fr 0.6fr 1.6fr;
+  gap: 24px;
   padding: 24px;
   border-bottom: 1px solid var(--border);
+  align-items: start;
 }
 
 input[type="search"],
@@ -98,7 +97,7 @@ select:focus {
   gap: 6px;
   align-items: center;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text);
   border: 1px solid var(--border);
   padding: 6px 14px;
@@ -106,7 +105,6 @@ select:focus {
   background: #ffffff;
   cursor: pointer;
   text-transform: none;
-  /* Keep specific column names normal case */
   letter-spacing: normal;
 }
 
@@ -148,14 +146,15 @@ td {
   font-size: 14px;
 }
 
-/* Column Specifics */
-td[data-key="team"] {
+/* Left-align Team and Model */
+td[data-key="team"],
+td[data-key="model"] {
   text-align: left;
   color: var(--accent);
   font-weight: 600;
 }
 
-/* Heatmap Tints */
+/* Column Heatmap Coloring */
 td[data-key="macro_f1"] {
   background: rgba(37, 99, 235, 0.06);
   font-weight: 700;
@@ -173,6 +172,7 @@ td[data-key="recall"] {
   background: rgba(245, 158, 11, 0.04);
 }
 
+/* Rank Colors */
 .rank-1 {
   color: #9a3412;
   font-weight: 800;
@@ -195,8 +195,15 @@ td[data-key="recall"] {
   font-weight: 500;
 }
 
-@media (max-width: 1000px) {
+/* Responsive Grid for Tablets/Mobile */
+@media (max-width: 1100px) {
   .controls {
     grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .controls {
+    grid-template-columns: 1fr;
   }
 }
