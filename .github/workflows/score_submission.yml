@@ -81,7 +81,7 @@ jobs:
         run: |
           pip install pandas pyarrow scikit-learn
 
-      # Decrypt submission
+      # 7️⃣ Decrypt submission
       - name: Decrypt submission
         env:
           PRIVATE_KEY: ${{ secrets.DECRYPT_KEY }}
@@ -101,14 +101,6 @@ jobs:
           # 4. Immediate cleanup
           rm extra/private.pem extra/key.txt
 
-
-      # 7️⃣ Clone private labels repo
-      - name: Clone private labels repo
-        env:
-          EVAL_TOKEN: ${{ secrets.EVAL_TOKEN }}
-        run: |
-          git clone https://${EVAL_TOKEN}@github.com/abdksm/PROVEN-GNN-private.git private_labels
-
       # 8️⃣ Validate submission
       - name: Validate submission
         run: |
@@ -117,8 +109,15 @@ jobs:
             data/public/test_ids.csv \
             submissions/metadata.json
 
+      # 9️⃣ Clone private labels repo
+      - name: Clone private labels repo
+        env:
+          EVAL_TOKEN: ${{ secrets.EVAL_TOKEN }}
+        run: |
+          git clone https://${EVAL_TOKEN}@github.com/abdksm/PROVEN-GNN-private.git private_labels
 
-      # 9️⃣ Run scoring
+
+      # 🔟 Run scoring
       - name: Run scoring
         run: |
           python competition/evaluate.py \
@@ -127,7 +126,7 @@ jobs:
             score.txt
           cp score.txt /tmp/score.txt
 
-      # 🔟 Comment Macro F1 on Pull Request
+      # 1️⃣1️⃣ Comment Macro F1 on Pull Request
       - name: Comment Macro F1 on PR
         uses: actions/github-script@v7
         with:
@@ -145,7 +144,7 @@ jobs:
             🏆 **Macro F1 Score:** \`${macroF1}\``
             });
 
-      # 1️⃣1️⃣ Update leaderboard.csv
+      # 1️⃣2️⃣ Update leaderboard.csv
       - name: Update leaderboard.csv
         run: |
           git config user.name "challenge-bot"
@@ -157,7 +156,7 @@ jobs:
             "${{ github.event.pull_request.user.login }}"
           python competition/render_leaderboard.py
 
-      # 1️⃣2️⃣ Commit and push leaderboard
+      # 1️⃣3️⃣ Commit and push leaderboard
       - name: Commit leaderboard update
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
