@@ -1,20 +1,13 @@
-/* --- FULL STYLE.CSS (LIGHT MODE) --- */
-
 :root {
   --bg: #f8fafc;
-  /* Light grey background for the page */
   --panel: #ffffff;
-  /* White background for the leaderboard card */
   --text: #1e293b;
-  /* Dark slate text for high contrast */
   --muted: #64748b;
-  /* Muted grey for secondary text */
   --border: #e2e8f0;
-  /* Light border color */
   --accent: #2563eb;
-  /* Primary blue for links/team names */
   --header-blue: #2563eb;
-  /* Vibrant blue for the top row */
+  --label-dark: #334155;
+  /* Darker slate for title visibility */
 }
 
 * {
@@ -29,19 +22,102 @@ body {
 }
 
 .wrap {
-  max-width: 1300px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 18px;
 }
 
-/* Container for the leaderboard */
+h1 {
+  margin: 0 0 8px 0;
+  color: var(--text);
+}
+
+.sub {
+  margin: 0 0 20px 0;
+  color: var(--muted);
+}
+
+/* Main Card */
 .card {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 14px;
-  margin: 14px 0;
   overflow: hidden;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Visibility Update for Titles --- */
+.control label {
+  display: block;
+  font-size: 13px;
+  font-weight: 800;
+  /* Extra bold for visibility */
+  color: var(--label-dark);
+  margin: 0 0 10px 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  /* Spaced out for clarity */
+}
+
+/* Controls Layout */
+.controls {
+  display: grid;
+  grid-template-columns: 1.5fr 0.8fr 0.8fr 1.5fr;
+  gap: 20px;
+  padding: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+input[type="search"],
+select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  color: var(--text);
+  outline: none;
+  font-size: 14px;
+}
+
+input[type="search"]:focus,
+select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Checkboxes / Column Toggles */
+.checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.checks label {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #ffffff;
+  cursor: pointer;
+  text-transform: none;
+  /* Keep specific column names normal case */
+  letter-spacing: normal;
+}
+
+.checks label:hover {
+  background: #f1f5f9;
+  border-color: var(--accent);
+}
+
+/* Table Styling */
+.table-wrap {
+  overflow-x: auto;
 }
 
 table {
@@ -50,156 +126,76 @@ table {
   border-spacing: 0;
 }
 
-/* Blue Sticky Header */
 th {
   position: sticky;
   top: 0;
   background: var(--header-blue);
   color: #ffffff;
-  padding: 14px 10px;
+  padding: 16px 12px;
   text-align: center;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
-  border-right: 1px solid rgba(255, 255, 255, 0.2);
-  white-space: nowrap;
-  z-index: 10;
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+  z-index: 5;
 }
 
-th:hover {
-  filter: brightness(1.1);
-}
-
-/* Table Cells General Styling */
 td {
-  padding: 12px 10px;
+  padding: 14px 12px;
   border-bottom: 1px solid var(--border);
   border-right: 1px solid var(--border);
   text-align: center;
   font-size: 14px;
-  color: var(--text);
 }
 
-/* Team Column Alignment and Color */
+/* Column Specifics */
 td[data-key="team"] {
   text-align: left;
   color: var(--accent);
   font-weight: 600;
-  padding-left: 15px;
 }
 
-/* Heatmap Effects: Slightly adjusted for a white background */
+/* Heatmap Tints */
 td[data-key="macro_f1"] {
-  background: rgba(37, 99, 235, 0.08);
+  background: rgba(37, 99, 235, 0.06);
   font-weight: 700;
 }
 
 td[data-key="accuracy"] {
-  background: rgba(220, 38, 38, 0.05);
+  background: rgba(239, 68, 68, 0.04);
 }
 
 td[data-key="precision"] {
-  background: rgba(22, 163, 74, 0.05);
+  background: rgba(34, 197, 94, 0.04);
 }
 
 td[data-key="recall"] {
-  background: rgba(217, 119, 6, 0.05);
+  background: rgba(245, 158, 11, 0.04);
 }
 
-/* Rank Styling for Medals */
 .rank-1 {
-  color: #b45309;
-  font-weight: bold;
+  color: #9a3412;
+  font-weight: 800;
 }
 
-/* Darker Gold for visibility */
 .rank-2 {
   color: #475569;
-  font-weight: bold;
+  font-weight: 800;
 }
 
-/* Darker Silver */
 .rank-3 {
-  color: #92400e;
-  font-weight: bold;
+  color: #78350f;
+  font-weight: 800;
 }
 
-/* Darker Bronze */
-
-/* Control Panels (Search, Filters) */
-.controls {
-  display: grid;
-  grid-template-columns: 1.5fr 0.7fr 0.7fr 1.1fr;
-  gap: 12px;
-  align-items: end;
-  padding: 20px;
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  margin-bottom: 14px;
-}
-
-.control label {
-  display: block;
-  font-size: 12px;
-  color: var(--muted);
-  margin: 0 0 6px;
-}
-
-/* Column Toggle Checkboxes */
-.checks {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 10px 0;
-}
-
-.checks label {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  font-size: 12px;
-  color: var(--text);
-  border: 1px solid var(--border);
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: #ffffff;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.checks label:hover {
-  background: #f1f5f9;
-  border-color: var(--accent);
-}
-
-/* Search and Select Inputs */
-input[type="search"],
-select {
-  width: 100%;
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: #ffffff;
-  color: var(--text);
-  outline: none;
-}
-
-input[type="search"]:focus,
-select:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
-}
-
-/* Status text and footer */
 #status {
-  padding: 10px 20px;
+  padding: 15px 24px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: 500;
 }
 
-/* Responsive adjustments */
-@media (max-width: 900px) {
+@media (max-width: 1000px) {
   .controls {
     grid-template-columns: 1fr 1fr;
   }

@@ -1,52 +1,47 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Leaderboard</title>
-  <link rel="stylesheet" href="leaderboard.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PROVEN-GNN Leaderboard</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <header class="wrap">
-    <div class="title-row">
-      <h1>Leaderboard</h1>
-      <p class="sub">Search, filter, and compare submissions. Scores are computed on the hidden test set by the official
-        evaluator.</p>
-    </div>
-  </header>
+  <div class="wrap">
+    <header>
+      <h1>PROVEN-GNN Leaderboard</h1>
+      <p class="sub">Comprehensive evaluation of Graph Neural Networks on proven benchmarks.</p>
+    </header>
 
-  <main class="wrap">
-    <section class="controls card">
-      <div class="control">
-        <label for="search">Search</label>
-        <input id="search" type="search" placeholder="Search team, model, notes…" />
+    <div class="card">
+      <div class="controls">
+        <div class="control">
+          <label for="search">Search</label>
+          <input type="search" id="search" placeholder="Search team, model, notes...">
+        </div>
+        <div class="control">
+          <label for="modelFilter">Model</label>
+          <select id="modelFilter">
+            <option value="all">All</option>
+          </select>
+        </div>
+        <div class="control">
+          <label for="dateFilter">Date</label>
+          <select id="dateFilter">
+            <option value="all">All</option>
+            <option value="last30">Last 30 Days</option>
+            <option value="last180">Last 6 Months</option>
+          </select>
+        </div>
+        <div class="control">
+          <label>Columns</label>
+          <div id="columnToggles" class="checks">
+          </div>
+        </div>
       </div>
 
-      <div class="control">
-        <label for="modelFilter">Model</label>
-        <select id="modelFilter">
-          <option value="all">All</option>
-        </select>
-      </div>
-
-      <div class="control">
-        <label for="dateFilter">Date</label>
-        <select id="dateFilter">
-          <option value="all">All</option>
-          <option value="last30">Last 30 days</option>
-          <option value="last180">Last 180 days</option>
-        </select>
-      </div>
-
-      <div class="control">
-        <label>Columns</label>
-        <div class="checks" id="columnToggles"></div>
-      </div>
-    </section>
-
-    <section class="card">
       <div class="table-wrap">
         <table id="tbl">
           <thead>
@@ -62,15 +57,13 @@
               <th data-key="timestamp_utc">Date (UTC)</th>
             </tr>
           </thead>
-          <tbody></tbody>
+          <tbody>
+          </tbody>
         </table>
       </div>
-      <div class="foot">
-        <span id="status">Loading leaderboard…</span>
-      </div>
-    </section>
-  </main>
-
+      <div id="status">Loading results...</div>
+    </div>
+  </div>
   <script src="leaderboard.js"></script>
 </body>
 
