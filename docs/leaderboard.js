@@ -1,9 +1,10 @@
-/* * Leaderboard UI for PROVEN-GNN
- * - Fields: Rank, Team, Type, Model, Macro-F1, Accuracy, Precision, Recall, Date
+/* * Leaderboard Engine for PROVEN-GNN
+ * Handles CSV parsing, heatmap rendering, and rank icons
  */
 
 function parseCSV(text) {
   const lines = text.trim().split(/\r?\n/);
+  if (lines.length < 2) return [];
   const header = lines[0].split(",");
   const rows = [];
   for (let i = 1; i < lines.length; i++) {
@@ -27,8 +28,7 @@ function parseCSV(text) {
 function daysAgo(dateStr) {
   const d = new Date(dateStr);
   if (isNaN(d.getTime())) return Infinity;
-  const now = new Date();
-  return (now - d) / (1000 * 60 * 60 * 24);
+  return (new Date() - d) / (1000 * 60 * 60 * 24);
 }
 
 const state = {
@@ -64,25 +64,40 @@ function renderTable() {
       rank = idx + 1;
     }
 
-    // UI Structure: Added 'type', Accuracy, Precision, Recall; Removed Notes
     const cells = [
       ["rank", rank],
-      ["team", r.team],
-      ["type", r.type],
       ["model", r.model],
+      ["type", r.type || "🧠"],
+      ["source", "🔒"], // Placeholder from image
+      ["timestamp_utc", r.timestamp_utc],
       ["macro_f1", r.macro_f1],
       ["accuracy", r.accuracy],
       ["precision", r.precision],
       ["recall", r.recall],
-      ["timestamp_utc", r.timestamp_utc],
     ];
 
     cells.forEach(([k, v]) => {
       const td = document.createElement("td");
       td.dataset.key = k;
-      td.textContent = v;
-      if (k === "rank") td.classList.add("rank");
-      if (k === "macro_f1") td.classList.add("score");
+
+      if (k === "rank") {
+        let medal = "";
+        if (v === 1) medal = " 🥇";
+        else if (v === 2) medal = " 🥈";
+        else if (v === 3) medal = " 🥉";
+        td.innerHTML = `<strong>${v}${medal}</strong>`;
+        td.className = `rank-${v}`;
+      }
+      else if (["macro_f1", "accuracy", "precision", "recall"].includes(k)) {
+        // Convert 0.456 to 45.6%
+        const num = parseFloat(v);
+        td.textContent = isNaN(num) ? v : (num * 100).toFixed(1) + "%";
+        td.style.fontWeight = "600";
+      }
+      else {
+        td.textContent = v;
+      }
+
       if (state.hiddenCols.has(k)) td.style.display = "none";
       tr.appendChild(td);
     });
@@ -95,8 +110,7 @@ function renderTable() {
     th.style.display = state.hiddenCols.has(k) ? "none" : "";
   });
 
-  document.getElementById("status").textContent =
-    rows.length ? `${rows.length} result(s)` : "No results";
+  document.getElementById("status").textContent = rows.length + " result(s)";
 }
 
 function applyFilters() {
@@ -106,21 +120,13 @@ function applyFilters() {
 
   let rows = [...state.rows];
 
-  if (model !== "all") {
-    rows = rows.filter(r => (r.model || "").toLowerCase() === model);
-  }
-
+  if (model !== "all") rows = rows.filter(r => r.model.toLowerCase() === model);
   if (date !== "all") {
-    const maxDays = (date === "last30") ? 30 : 180;
-    rows = rows.filter(r => daysAgo(r.timestamp_utc) <= maxDays);
+    const limit = (date === "last30") ? 30 : 180;
+    rows = rows.filter(r => daysAgo(r.timestamp_utc) <= limit);
   }
-
   if (q) {
-    rows = rows.filter(r => {
-      // Search now includes 'type' field
-      const hay = `${r.team} ${r.type} ${r.model} ${r.timestamp_utc}`.toLowerCase();
-      return hay.includes(q);
-    });
+    rows = rows.filter(r => `${r.team} ${r.model} ${r.type}`.toLowerCase().includes(q));
   }
 
   const k = state.sortKey;
@@ -128,16 +134,11 @@ function applyFilters() {
   rows.sort((a, b) => {
     let av = a[k], bv = b[k];
     if (["macro_f1", "accuracy", "precision", "recall"].includes(k)) {
-      av = parseFloat(av); bv = parseFloat(bv);
-      if (isNaN(av)) av = -Infinity;
-      if (isNaN(bv)) bv = -Infinity;
+      av = parseFloat(av) || -1;
+      bv = parseFloat(bv) || -1;
       return (av - bv) * dir;
     }
-    av = (av ?? "").toString().toLowerCase();
-    bv = (bv ?? "").toString().toLowerCase();
-    if (av < bv) return -1 * dir;
-    if (av > bv) return 1 * dir;
-    return 0;
+    return (av.toString().toLowerCase() < bv.toString().toLowerCase() ? -1 : 1) * dir;
   });
 
   state.filtered = rows;
@@ -146,39 +147,23 @@ function applyFilters() {
 
 function setupColumnToggles() {
   const cols = [
-    ["rank", "Rank"],
-    ["team", "Team"],
-    ["type", "Type"],
-    ["model", "Model"],
-    ["macro_f1", "Macro-F1 Score"],
-    ["accuracy", "Accuracy"],
-    ["precision", "Precision"],
-    ["recall", "Recall"],
-    ["timestamp_utc", "Date (UTC)"],
+    ["rank", "Rank"], ["model", "Model"], ["type", "Type"], ["source", "Source"],
+    ["timestamp_utc", "Date"], ["macro_f1", "Overall Acc"],
+    ["accuracy", "Accuracy"], ["precision", "Precision"], ["recall", "Recall"]
   ];
   const wrap = document.getElementById("columnToggles");
   wrap.innerHTML = "";
   cols.forEach(([k, label]) => {
-    const id = `col_${k}`;
     const lab = document.createElement("label");
     const cb = document.createElement("input");
     cb.type = "checkbox";
     cb.checked = !state.hiddenCols.has(k);
-    cb.id = id;
     cb.addEventListener("change", () => {
-      if (cb.checked) state.hiddenCols.add(k); // Using Set logic correctly
+      if (cb.checked) state.hiddenCols.delete(k);
       else state.hiddenCols.add(k);
-      // Logic fix: toggle set
-      if (state.hiddenCols.has(k)) {
-        if (cb.checked) state.hiddenCols.delete(k);
-        else state.hiddenCols.add(k);
-      }
       renderTable();
     });
-    lab.appendChild(cb);
-    const sp = document.createElement("span");
-    sp.textContent = label;
-    lab.appendChild(sp);
+    lab.append(cb, label);
     wrap.appendChild(lab);
   });
 }
@@ -188,61 +173,41 @@ function setupSorting() {
     th.addEventListener("click", () => {
       const k = th.dataset.key;
       if (!k) return;
-      if (state.sortKey === k) {
-        state.sortDir = (state.sortDir === "asc") ? "desc" : "asc";
-      } else {
-        state.sortKey = k;
-        state.sortDir = (["macro_f1", "accuracy", "precision", "recall"].includes(k)) ? "desc" : "asc";
-      }
+      state.sortDir = (state.sortKey === k && state.sortDir === "desc") ? "asc" : "desc";
+      state.sortKey = k;
       applyFilters();
     });
   });
 }
 
 async function main() {
-  const status = document.getElementById("status");
   try {
     const res = await fetch("/PROVEN-GNN/leaderboard/leaderboard.csv", { cache: "no-store" });
     const txt = await res.text();
-    const rows = parseCSV(txt);
+    state.rows = parseCSV(txt).map(r => ({
+      ...r,
+      model: r.model || "Unknown",
+      macro_f1: r.macro_f1 || r.score || "0",
+      type: r.type || "🧠"
+    }));
 
-    const cleaned = rows
-      .filter(r => r.team)
-      .map(r => ({
-        timestamp_utc: r.timestamp_utc,
-        team: r.team,
-        type: r.type || "N/A", // New mapping for 'type'
-        model: (r.model || "").toLowerCase(),
-        macro_f1: r.macro_f1 || "0.0",
-        accuracy: r.accuracy || "0.0",
-        precision: r.precision || "0.0",
-        recall: r.recall || "0.0"
-      }));
-
-    state.rows = cleaned;
-
-    const modelSet = new Set(cleaned.map(r => r.model).filter(Boolean));
+    const modelSet = new Set(state.rows.map(r => r.model));
     const sel = document.getElementById("modelFilter");
     [...modelSet].sort().forEach(m => {
       const opt = document.createElement("option");
-      opt.value = m;
-      opt.textContent = m;
+      opt.value = m.toLowerCase(); opt.textContent = m;
       sel.appendChild(opt);
     });
 
     setupColumnToggles();
     setupSorting();
+    applyFilters();
 
     document.getElementById("search").addEventListener("input", applyFilters);
     document.getElementById("modelFilter").addEventListener("change", applyFilters);
     document.getElementById("dateFilter").addEventListener("change", applyFilters);
-
-    state.sortKey = "macro_f1";
-    state.sortDir = "desc";
-    applyFilters();
   } catch (e) {
-    status.textContent = "Failed to load leaderboard.";
-    console.error(e);
+    document.getElementById("status").textContent = "Error loading data.";
   }
 }
 
