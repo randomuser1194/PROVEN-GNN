@@ -1,9 +1,7 @@
-/* Minimal, dependency-free leaderboard UI:
- * - loads leaderboard/leaderboard.csv
- * - search + filters (model, date)
- * - sortable columns
- * - column toggles
+/* * Leaderboard UI for PROVEN-GNN
+ * - Fields: Rank, Team, Type, Model, Macro-F1, Accuracy, Precision, Recall, Date
  */
+
 function parseCSV(text) {
   const lines = text.trim().split(/\r?\n/);
   const header = lines[0].split(",");
@@ -11,7 +9,6 @@ function parseCSV(text) {
   for (let i = 1; i < lines.length; i++) {
     if (!lines[i].trim()) continue;
     const cols = [];
-    // naive CSV parse with quotes
     let cur = "", inQ = false;
     for (let j = 0; j < lines[i].length; j++) {
       const ch = lines[i][j];
@@ -37,8 +34,8 @@ function daysAgo(dateStr) {
 const state = {
   rows: [],
   filtered: [],
-  sortKey: "score",
-  sortDir: "desc", // asc|desc
+  sortKey: "macro_f1",
+  sortDir: "desc",
   hiddenCols: new Set(),
 };
 
@@ -52,32 +49,32 @@ function renderTable() {
 
   rows.forEach((r, idx) => {
     const tr = document.createElement("tr");
-
     let rank;
 
-    // Only apply tie-ranking when sorting by score
-    if (state.sortKey === "score") {
-      const currentScore = parseFloat(r.score);
-
+    if (state.sortKey === "macro_f1") {
+      const currentScore = parseFloat(r.macro_f1);
       if (currentScore === lastScore) {
-        rank = lastRank; // same rank as previous
+        rank = lastRank;
       } else {
-        rank = idx + 1;  // position-based rank
+        rank = idx + 1;
         lastRank = rank;
         lastScore = currentScore;
       }
     } else {
-      // normal ranking for other columns
       rank = idx + 1;
     }
 
+    // UI Structure: Added 'type', Accuracy, Precision, Recall; Removed Notes
     const cells = [
       ["rank", rank],
       ["team", r.team],
+      ["type", r.type],
       ["model", r.model],
-      ["score", r.score],
+      ["macro_f1", r.macro_f1],
+      ["accuracy", r.accuracy],
+      ["precision", r.precision],
+      ["recall", r.recall],
       ["timestamp_utc", r.timestamp_utc],
-      ["notes", r.notes || ""],
     ];
 
     cells.forEach(([k, v]) => {
@@ -85,7 +82,7 @@ function renderTable() {
       td.dataset.key = k;
       td.textContent = v;
       if (k === "rank") td.classList.add("rank");
-      if (k === "score") td.classList.add("score");
+      if (k === "macro_f1") td.classList.add("score");
       if (state.hiddenCols.has(k)) td.style.display = "none";
       tr.appendChild(td);
     });
@@ -120,7 +117,8 @@ function applyFilters() {
 
   if (q) {
     rows = rows.filter(r => {
-      const hay = `${r.team} ${r.model} ${r.notes} ${r.timestamp_utc}`.toLowerCase();
+      // Search now includes 'type' field
+      const hay = `${r.team} ${r.type} ${r.model} ${r.timestamp_utc}`.toLowerCase();
       return hay.includes(q);
     });
   }
@@ -129,7 +127,7 @@ function applyFilters() {
   const dir = state.sortDir === "asc" ? 1 : -1;
   rows.sort((a, b) => {
     let av = a[k], bv = b[k];
-    if (k === "score") {
+    if (["macro_f1", "accuracy", "precision", "recall"].includes(k)) {
       av = parseFloat(av); bv = parseFloat(bv);
       if (isNaN(av)) av = -Infinity;
       if (isNaN(bv)) bv = -Infinity;
@@ -150,10 +148,13 @@ function setupColumnToggles() {
   const cols = [
     ["rank", "Rank"],
     ["team", "Team"],
+    ["type", "Type"],
     ["model", "Model"],
-    ["score", "Score"],
+    ["macro_f1", "Macro-F1 Score"],
+    ["accuracy", "Accuracy"],
+    ["precision", "Precision"],
+    ["recall", "Recall"],
     ["timestamp_utc", "Date (UTC)"],
-    ["notes", "Notes"],
   ];
   const wrap = document.getElementById("columnToggles");
   wrap.innerHTML = "";
@@ -165,8 +166,13 @@ function setupColumnToggles() {
     cb.checked = !state.hiddenCols.has(k);
     cb.id = id;
     cb.addEventListener("change", () => {
-      if (cb.checked) state.hiddenCols.delete(k);
+      if (cb.checked) state.hiddenCols.add(k); // Using Set logic correctly
       else state.hiddenCols.add(k);
+      // Logic fix: toggle set
+      if (state.hiddenCols.has(k)) {
+        if (cb.checked) state.hiddenCols.delete(k);
+        else state.hiddenCols.add(k);
+      }
       renderTable();
     });
     lab.appendChild(cb);
@@ -186,7 +192,7 @@ function setupSorting() {
         state.sortDir = (state.sortDir === "asc") ? "desc" : "asc";
       } else {
         state.sortKey = k;
-        state.sortDir = (k === "score") ? "desc" : "asc";
+        state.sortDir = (["macro_f1", "accuracy", "precision", "recall"].includes(k)) ? "desc" : "asc";
       }
       applyFilters();
     });
@@ -205,10 +211,12 @@ async function main() {
       .map(r => ({
         timestamp_utc: r.timestamp_utc,
         team: r.team,
+        type: r.type || "N/A", // New mapping for 'type'
         model: (r.model || "").toLowerCase(),
-        // Mapping 'macro_f1' from CSV to the internal 'score' field
-        score: r.macro_f1 || r.score,
-        notes: r.notes || "",
+        macro_f1: r.macro_f1 || "0.0",
+        accuracy: r.accuracy || "0.0",
+        precision: r.precision || "0.0",
+        recall: r.recall || "0.0"
       }));
 
     state.rows = cleaned;
@@ -229,7 +237,7 @@ async function main() {
     document.getElementById("modelFilter").addEventListener("change", applyFilters);
     document.getElementById("dateFilter").addEventListener("change", applyFilters);
 
-    state.sortKey = "score";
+    state.sortKey = "macro_f1";
     state.sortDir = "desc";
     applyFilters();
   } catch (e) {
