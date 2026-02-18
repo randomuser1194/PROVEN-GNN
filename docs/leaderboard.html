@@ -1,16 +1,19 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Leaderboard</title>
   <link rel="stylesheet" href="leaderboard.css" />
 </head>
+
 <body>
   <header class="wrap">
     <div class="title-row">
       <h1>Leaderboard</h1>
-      <p class="sub">Search, filter, and compare submissions. Scores are computed on the hidden test set by the official evaluator.</p>
+      <p class="sub">Search, filter, and compare submissions. Scores are computed on the hidden test set by the official
+        evaluator.</p>
     </div>
   </header>
 
@@ -50,10 +53,13 @@
             <tr>
               <th data-key="rank" data-sort="number">Rank</th>
               <th data-key="team" data-sort="string">Team</th>
+              <th data-key="type" data-sort="string">Type</th>
               <th data-key="model" data-sort="string">Model</th>
-              <th data-key="score" data-sort="number">Score</th>
+              <th data-key="macro-f1" data-sort="number">Macro-F1</th>
+              <th data-key="accuracy" data-sort="number">Accuracy</th>
+              <th data-key="precision" data-sort="number">Precision</th>
+              <th data-key="recall" data-sort="number">Recall</th>
               <th data-key="timestamp_utc" data-sort="string">Date (UTC)</th>
-              <th data-key="notes" data-sort="string">Notes</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -67,4 +73,5 @@
 
   <script src="leaderboard.js"></script>
 </body>
+
 </html>
