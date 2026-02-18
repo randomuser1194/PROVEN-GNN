@@ -96,7 +96,7 @@ jobs:
           openssl pkeyutl -decrypt -inkey extra/private.pem -in submissions/secret.key.enc | tr -d '\r\n ' > extra/key.txt
           
           # 3. Decrypt the CSV using the cleaned key
-          openssl enc -d -aes-256-cbc -in submissions/predictions.csv.enc -out predictions.csv -pass file:extra/key.txt -pbkdf2
+          openssl enc -d -aes-256-cbc -in submissions/predictions.csv.enc -out submissions/predictions.csv -pass file:extra/key.txt -pbkdf2
           
           # 4. Immediate cleanup
           rm extra/private.pem extra/key.txt
